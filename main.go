@@ -56,7 +56,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "error?? %s", err.Error())
 		return
 	}
-	fmt.Fprintf(w, "hello ji namaste %s", string(body))
+	fmt.Fprintf(w, "hello ji bonjour %s", string(body))
 }
 
 func pong(w http.ResponseWriter, r *http.Request) {
