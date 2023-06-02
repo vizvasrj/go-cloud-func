@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 // var clientOnce sync.Once
@@ -29,6 +31,7 @@ import (
 func main() {
 	log.Print("starting server...")
 	http.HandleFunc("/", handler)
+	http.HandleFunc("/ping", pong)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -42,9 +45,21 @@ func main() {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	name := os.Getenv("NAME")
-	if name == "" {
-		name = "World"
+	curl, err := http.Get("https://ipinfo.io")
+	if err != nil {
+		fmt.Fprintf(w, "error?? %s", err.Error())
+		return
 	}
-	fmt.Fprintf(w, "hello ji %s", name)
+	defer curl.Body.Close()
+	body, err := ioutil.ReadAll(curl.Body)
+	if err != nil {
+		fmt.Fprintf(w, "error?? %s", err.Error())
+		return
+	}
+	fmt.Fprintf(w, "hello ji namaste %s", string(body))
+}
+
+func pong(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(15 * time.Second)
+	fmt.Fprintf(w, "pong")
 }
